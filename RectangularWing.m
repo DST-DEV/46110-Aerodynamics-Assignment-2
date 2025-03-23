@@ -37,8 +37,12 @@ classdef RectangularWing
             %   Outputs:
             %       y     - Spanwise locations
             %       theta - Angular coordinates
+
+
             theta = linspace(0, pi, N+2);
             theta = theta(2:end-1);  % Remove the first and last point to avoid singularities
+
+            %Calculate spanwise coordinates
             y = -obj.b/2 * cos(theta);   % Spanwise locations
         end
         

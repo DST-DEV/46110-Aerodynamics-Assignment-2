@@ -89,7 +89,7 @@ if plot_Gamma
         else
             disp_name = '$AR=\infty$';
         end
-        plot(wings_ell(i).LL_res.y/wings_ell(i).b, ...
+        plot(wings_ell(i).LL_res.y/wings_ell(i).b*2, ...
              wings_ell(i).LL_res.Gamma(:,ind), ...
              LineWidth=lw(i), Marker=markers(i), MarkerSize=ms(i), ...
              DisplayName=disp_name);
@@ -98,14 +98,14 @@ if plot_Gamma
 
     % Configure limits and ticks
     ylim('auto');
-    xticks(-.5:.25:.5);
-    xlim(ax, [-.5, .5]);
+    xticks(-1:.5:1);
+    xlim(ax, [-1, 1]);
 
     % Plot labels
     set(gcf,'Color','White');
     set(ax,'FontSize',fs);
     legend('Location', 'south', 'Interpreter', 'latex')
-    xlabel('$y/b$', 'Interpreter', 'latex');
+    xlabel('$y/(b/2)$', 'Interpreter', 'latex');
     ylabel('$\Gamma$', 'Interpreter', 'latex');
     set(ax, 'TickLabelInterpreter', 'latex');
 else
@@ -156,7 +156,7 @@ if plot_C_l
 
     % Save figure
         if savefigs
-            exp_name = fullfile(exp_fld, 'C_l_vs_alpha.pdf');
+            exp_name = fullfile(exp_fld, 'T1_C_l_vs_alpha.pdf');
             exportgraphics(gcf, exp_name, 'ContentType', 'vector', ...
                 'BackgroundColor', 'none', 'Resolution', 300);
         end
@@ -210,7 +210,7 @@ if plot_C_di
 
     % Save figure
         if savefigs
-            exp_name = fullfile(exp_fld, 'C_di_vs_alpha.pdf');
+            exp_name = fullfile(exp_fld, 'T1_C_di_vs_alpha.pdf');
             exportgraphics(gcf, exp_name, 'ContentType', 'vector', ...
                 'BackgroundColor', 'none', 'Resolution', 300);
         end

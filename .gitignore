@@ -5,4 +5,7 @@
 # Export files and folders
 xfoil_exports/*.txt
 plots/
+
+# Word files and assignment pdf
 Assignment 2.pdf
+*.docx

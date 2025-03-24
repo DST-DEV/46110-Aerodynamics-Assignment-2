@@ -17,12 +17,16 @@ for i = 1:numel(AR)
 end
 
 for i = 1:numel(AR)
-    % Calculate coefficients of lifting line theory
+    % Calculate spanwise coordinates 
     [y, theta] = wings_ell(i).wing.generate_coordinates(N);
-    A = LiftingLine.solve_coeffs(wings_ell(i).wing, y, theta, alpha, N, ...
+
+    % Calculate coefficients of lifting line theory
+    A = LiftingLine.solve_coeffs(wings_ell(i).wing, y, theta, alpha, ...
         NACA_4415.m_0, NACA_4415.alpha_L0);
+
     % Calculate global lift and induced drag coefficients
     [C_l_tot, C_di_tot] = LiftingLine.calc_lift_drag_wing(wings_ell(i).wing, A);
+
     % Calculate spanwise parameters
     % Note: alpha_i should be constant along the wing span
     [alpha_i, C_l, C_di, Gamma] = ...
@@ -53,9 +57,9 @@ plot_C_di = true;
 
 % Settings
 cols = ["#0072BD", "#D95319", "#EDB120", "#77AC30", "#80B3FF"];  % Colors of the lines
-markers = ["+", "*", "o", "diamond", "none"];  % Markers for the four methods
+markers = ["+", "*", "o", "diamond", "v"];  % Markers for the four methods
 ms = [4.5, 4.5, 4.5, 4.5, 4.5];  % Marker size for the plots of the four methods
-lw = [1, 1, 1, 1, 1.5];  % Linewidth for the lines of the four methods
+lw = [1, 1, 1, 1, 1];  % Linewidth for the lines of the four methods
 ax_col = [0.2, 0.2, 0.2];  % Color of accented axes
 ax_lw = 1.5;  % Line width of accented axes
 fs = 16;  % Plot font size
@@ -205,7 +209,7 @@ if plot_C_di
     set(ax,'FontSize',fs);
     legend(plt, 'Location', 'northwest', 'Interpreter', 'latex')
     xlabel('AoA $[^{\circ}]$', 'Interpreter', 'latex');
-    ylabel('$C_d$', 'Interpreter', 'latex');
+    ylabel('$C_{d_i}$', 'Interpreter', 'latex');
     set(ax, 'TickLabelInterpreter', 'latex');
 
     % Save figure
@@ -215,7 +219,7 @@ if plot_C_di
                 'BackgroundColor', 'none', 'Resolution', 300);
         end
 else
-    disp('C_d_induced vs alpha not plotted')
+    disp('C_{d_i}nduced vs alpha not plotted')
 end
 
 fig_count = fig_count + 1;

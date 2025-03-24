@@ -18,13 +18,18 @@ for i = 1:numel(TR)
 end
 for i = 1:numel(TR)
     wing_i = wings_taper(i).wing;
-    % Calculate coefficients of lifting line theory
+    % Calculate spanwise coordinates 
     [y, theta] = wing_i.generate_coordinates(N);
-    A = LiftingLine.solve_coeffs(wing_i, y, theta, alpha, N, ...
+
+    % Calculate coefficients of lifting line theory
+    A = LiftingLine.solve_coeffs(wing_i, y, theta, alpha, ...
         NACA_4415.m_0, NACA_4415.alpha_L0);
+
     % Calculate spanwise parameters
     [alpha_i, C_l, C_di, Gamma] = ...
         LiftingLine.calc_lift_drag_sections(wing_i, y, theta, A);
+
+    %Non-dimensionalize Gamma distribution
     Gamma_nd = Gamma./(U_0*wing_i.chord_length(y)./wing_i.c_mean);
     
     wings_taper(i).LL_res = struct('y', y, 'theta', theta, 'A', A, ...
@@ -46,9 +51,9 @@ plot_C_di = true;
 
 % Settings
 cols = ["#0072BD", "#D95319", "#EDB120", "#77AC30", "#80B3FF"];  % Colors of the lines
-markers = ["+", "*", "o", "diamond", "none"];  % Markers for the four methods
+markers = ["+", "*", "o", "diamond", "v"];  % Markers for the four methods
 ms = [4.5, 4.5, 4.5, 4.5, 4.5];  % Marker size for the plots of the four methods
-lw = [1, 1, 1, 1, 1.5];  % Linewidth for the lines of the four methods
+lw = [1, 1, 1, 1, 1];  % Linewidth for the lines of the four methods
 ax_col = [0.2, 0.2, 0.2];  % Color of accented axes
 ax_lw = 1.5;  % Line width of accented axes
 fs = 16;  % Plot font size
@@ -239,7 +244,7 @@ if plot_C_di
     set(ax,'FontSize',fs);
     legend(plt, 'Location', 'south', 'Interpreter', 'latex')
     xlabel('$y/(b/2)$', 'Interpreter', 'latex');
-    ylabel('$C_{di}$', 'Interpreter', 'latex');
+    ylabel('$C_{d_i}$', 'Interpreter', 'latex');
     set(ax, 'TickLabelInterpreter', 'latex');
 
     % Save figure

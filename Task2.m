@@ -18,9 +18,11 @@ for i = 1:numel(AR)
 end
 
 for i = 1:numel(AR)
-    % Calculate coefficients of lifting line theory
+    % Calculate spanwise coordinates 
     [y, theta] = wings_rect(i).wing.generate_coordinates(N);
-    A = LiftingLine.solve_coeffs(wings_rect(i).wing, y, theta, alpha, N, ...
+
+    % Calculate coefficients of lifting line theory
+    A = LiftingLine.solve_coeffs(wings_rect(i).wing, y, theta, alpha, ...
         NACA_4415.m_0, NACA_4415.alpha_L0);
     % Calculate global lift and induced drag coefficients
     [C_l_tot, C_di_tot] = LiftingLine.calc_lift_drag_wing(wings_rect(i).wing, A);
@@ -29,10 +31,10 @@ for i = 1:numel(AR)
     [alpha_i, C_l, C_di, Gamma] = ...
         LiftingLine.calc_lift_drag_sections(wings_rect(i).wing, y, theta, A);
     
-    alpha_g = alpha - alpha_i;  % Geometric angle of attack
+    alpha_eff = alpha - alpha_i;  % Effective angle of attack
     C_d_fric = interp1(NACA_4415.xfoil_res.alpha, ...
                        NACA_4415.xfoil_res.C_d, ...
-                       alpha_g);
+                       alpha_eff);
     wings_rect(i).LL_res = struct('y', y, 'theta', theta, 'A', A, ...
                                  'alpha', alpha,...
                                  'C_l_tot', C_l_tot, ...
@@ -54,9 +56,9 @@ plot_C_di = true;
 
 % Settings
 cols = ["#0072BD", "#D95319", "#EDB120", "#77AC30", "#80B3FF"];  % Colors of the lines
-markers = ["+", "*", "o", "diamond", "none"];  % Markers for the four methods
+markers = ["+", "*", "o", "diamond", "v"];  % Markers for the four methods
 ms = [4.5, 4.5, 4.5, 4.5, 4.5];  % Marker size for the plots of the four methods
-lw = [1, 1, 1, 1, 1.5];  % Linewidth for the lines of the four methods
+lw = [1, 1, 1, 1, 1];  % Linewidth for the lines of the four methods
 ax_col = [0.2, 0.2, 0.2];  % Color of accented axes
 ax_lw = 1.5;  % Line width of accented axes
 fs = 16;  % Plot font size
@@ -89,7 +91,7 @@ if plot_Gamma
             else
                 disp_name = '$AR=\infty$';
             end
-            plot(wings_rect(i).LL_res.y/wings_rect(i).b, ...
+            plot(wings_rect(i).LL_res.y/wings_rect(i).b*2, ...
                  wings_rect(i).LL_res.Gamma(:,i_aa(i_a)), ...
                  LineWidth=lw(i), Marker=markers(i), MarkerSize=ms(i), ...
                  DisplayName=disp_name);
@@ -98,14 +100,14 @@ if plot_Gamma
 
         % Configure limits and ticks
         ylim('auto');
-        xticks(-.5:.25:.5);
-        xlim(ax, [-.5, .5]);
+        xticks(-1:.5:1);
+        xlim(ax, [-1, 1]);
     
         % Plot labels
         set(gcf,'Color','White');
         set(ax,'FontSize',fs);
         legend('Location', 'south', 'Interpreter', 'latex')
-        xlabel('$y/b$', 'Interpreter', 'latex');
+        xlabel('$y/(b/2)$', 'Interpreter', 'latex');
         ylabel('$\Gamma$', 'Interpreter', 'latex');
         set(ax, 'TickLabelInterpreter', 'latex');
     end
@@ -263,7 +265,7 @@ if plot_C_di
     set(ax,'FontSize',fs);
     legend(plt, 'Location', 'northwest', 'Interpreter', 'latex')
     xlabel('AoA $[^{\circ}]$', 'Interpreter', 'latex');
-    ylabel('$C_d$', 'Interpreter', 'latex');
+    ylabel('$C_{d_i}$', 'Interpreter', 'latex');
     set(ax, 'TickLabelInterpreter', 'latex');
 
     % Save figure
@@ -273,7 +275,7 @@ if plot_C_di
                 'BackgroundColor', 'none', 'Resolution', 300);
         end
 else
-    disp('C_d_induced vs alpha not plotted')
+    disp('C_{d_i}nduced vs alpha not plotted')
 end
 
 fig_count = fig_count + 1;

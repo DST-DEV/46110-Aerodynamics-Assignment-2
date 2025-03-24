@@ -2,7 +2,7 @@ classdef LiftingLine
     %LiftingLine Class to calulate the lift and drag of a wing using the
     %lifting line theory by Prandtl
     methods (Static)
-        function A = solve_coeffs (wing, y, theta, alpha, N, m_0, alpha_L0)
+        function A = solve_coeffs (wing, y, theta, alpha, m_0, alpha_L0)
             % solve_coeffs Solve for Fourier coefficients using Prandtl's Lifting Line Theory.
             %   A = solve_fourier_coefficients(wing, alpha, N) solves for the Fourier coefficients
             %   A_n using Prandtl's Lifting Line Theory for the specified wing, angle of attack,
@@ -11,7 +11,6 @@ classdef LiftingLine
             %   Inputs:
             %       wing - The wing to use for the calculation
             %       alpha - Angle of attack in degrees
-            %       N - Number of terms in the Fourier series
             %       m_0 - Linear lift slope
             %       alpha_L0 - Zero lift angle of attack
             %
@@ -19,21 +18,26 @@ classdef LiftingLine
             %   	y - Cartesian section position
             %       theta - Polar section positions
             %       A - Fourier coefficients
-            if nargin<7
+            if nargin<6
                 alpha_L0 = -4;
             end
             alpha_L0 = deg2rad(alpha_L0);
         
-            if nargin<6
+            if nargin<5
                 m_0 = 2*pi;
             end
-            if nargin<5
-                N = 50;
+
+            % Determine number of Fourier terms
+            N = numel(y);
+
+            % Check size of angles of attack
+            if size(alpha, 1) ~= 1 & size(alpha, 1) ~= N
+                error('Size of alpha array does not match coordinate inputs')
             end
-        
+
             % Convert angle of attack to radians
             alpha = deg2rad(alpha);
-            N_alpha = length(alpha);
+            N_alpha = size(alpha, 2);
         
             % Calculate chord lengths
             c_theta = wing.chord_length(y);
@@ -50,7 +54,13 @@ classdef LiftingLine
                     M(i, n) = (4 * wing.b / (m_0 * c_theta(i))) * sin(n * theta(i)) ...
                                + n * sin(n * theta(i)) / sin(theta(i));
                 end
-                RHS(i, :) = alpha - alpha_L0;  % Angle of attack
+                
+            end
+
+            if size(alpha,1)>1
+                RHS = alpha - alpha_L0;  % Angle of attack
+            else
+                RHS = repmat(alpha - alpha_L0, N, 1);  % Angle of attack
             end
         
             % Solve for the Fourier coefficients

@@ -5,7 +5,7 @@ NACA_4415 = load(fullfile(res_fld, 'XFOIL_NACA_4415.mat')).NACA_4415;
 
 %% Simulation settings
 alpha = -6:.25:10;
-N=50;
+N=101;
 
 %% Lifting Line calculations
 AR = 4:2:10;
@@ -56,14 +56,16 @@ save(fullfile(res_fld, 'T1_wings_ell.mat'), 'wings_ell');
 % Selection
 savefigs = true;
 plot_Gamma = true; gamma_aoa = 5;
+plot_alpha_i = true;
 plot_C_l = true;
 plot_C_di = true;
+plot_C_D = true;
 
 % Settings
 cols = ["#0072BD", "#D95319", "#EDB120", "#77AC30", "#80B3FF"];  % Colors of the lines
-markers = ["+", "*", "o", "diamond", "v"];  % Markers for the four methods
+markers = ["none", "none", "none", "none", "none"];  % Markers for the four methods
 ms = [4.5, 4.5, 4.5, 4.5, 4.5];  % Marker size for the plots of the four methods
-lw = [1, 1, 1, 1, 1];  % Linewidth for the lines of the four methods
+lw = [1.5, 1.5, 1.5, 1.5, 1.5];  % Linewidth for the lines of the four methods
 ax_col = [0.2, 0.2, 0.2];  % Color of accented axes
 ax_lw = 1.5;  % Line width of accented axes
 fs = 16;  % Plot font size
@@ -122,8 +124,8 @@ end
 
 fig_count = fig_count + 1;
 
-%Plot C_l vs alpha
-if plot_C_l
+%Plot alpha_i vs alpha
+if plot_alpha_i
     % Create plot
     figure(fig_count+1);
     cla; hold on; grid on;
@@ -142,13 +144,67 @@ if plot_C_l
             disp_name = '$AR=\infty$';
         end
         plt(i) = plot(wings_ell(i).LL_res.alpha, ...
+                      wings_ell(i).LL_res.alpha_i(1,:), ...
+                      LineWidth=lw(i), ...
+                      Marker=markers(i), MarkerSize=ms(i), ...
+                      DisplayName=disp_name);
+    end
+    hold off; 
+
+    % Configure limits and ticks
+    ylim('auto');
+    xticks(min(alpha):2:max(alpha));
+    xlim(ax, [min(alpha), max(alpha)]);
+
+    % Plot labels
+    set(gcf,'Color','White');
+    set(ax,'FontSize',fs);
+    legend('Location', 'northwest', 'Interpreter', 'latex')
+    xlabel('AoA $[^{\circ}]$', 'Interpreter', 'latex');
+    ylabel('$\alpha_i\:[^{\circ}]$', 'Interpreter', 'latex');
+    set(ax, 'TickLabelInterpreter', 'latex');
+
+    % Save figure
+        if savefigs
+            exp_name = fullfile(exp_fld, 'T1_alpha_i_vs_alpha.pdf');
+            exportgraphics(gcf, exp_name, 'ContentType', 'vector', ...
+                'BackgroundColor', 'none', 'Resolution', 300);
+        end
+else
+    disp('alpha_i vs alpha not plotted')
+end
+
+fig_count = fig_count + 1;
+
+%Plot C_l vs alpha
+if plot_C_l
+    % Create plot
+    figure(fig_count+1);
+    cla; hold on; grid on;
+    colororder(cols);
+    ax = gca;
+        
+    % Highlight x=0 and y=0 grid line
+    y_ax = xline(0, Color=ax_col, LineWidth=ax_lw, ...
+                 HandleVisibility='off'); % Thick vertical line at x=0
+    x_ax = yline(0, Color=ax_col, LineWidth=ax_lw, ...
+                 HandleVisibility='off'); % Thick vertical line at y=0
+
+    % Plot C_l curves 
+    for i = 1:numel(AR)
+        if AR(i)<10000
+            disp_name = sprintf('$AR=%d$', AR(i));
+        else
+            disp_name = '$AR=\infty$';
+        end
+        plt(i) = plot(wings_ell(i).LL_res.alpha, ...
                       wings_ell(i).LL_res.C_l_tot, ...
                       LineWidth=lw(i), ...
                       Marker=markers(i), MarkerSize=ms(i), ...
                       DisplayName=disp_name);
     end
     plt(end+1) = plot(alpha, deg2rad(alpha-NACA_4415.alpha_L0)*NACA_4415.m_0, ...
-                  LineWidth=lw(5), color="k", ...
+                  LineWidth=1, color="k", LineStyle = "-.",...
                   DisplayName='Linear Lift Slope');
     hold off; 
 
@@ -226,7 +282,63 @@ if plot_C_di
                 'BackgroundColor', 'none', 'Resolution', 300);
         end
 else
-    disp('C_{d_i}nduced vs alpha not plotted')
+    disp('C_d induced vs alpha not plotted')
+end
+
+fig_count = fig_count + 1;
+
+%Plot C_D vs alpha
+if plot_C_D
+    % Create plot
+    figure(fig_count+1);
+    cla; hold on; grid on;
+    colororder(cols);
+    ax = gca;
+    
+    % Highlight y=0 grid line
+    y_ax = xline(0, Color=ax_col, LineWidth=ax_lw, ...
+                 HandleVisibility='off'); % Thick vertical line at x=0
+
+    % Plot C_d curves 
+    plt = [];  % Ensure plot list is empty
+    for i = 1:numel(AR)
+        if AR(i)<10000
+            disp_name = sprintf('$AR=%d$', AR(i));
+        else
+            disp_name = '$AR=\infty$';
+        end
+        plt(i) = plot(wings_ell(i).LL_res.alpha, ...
+                      wings_ell(i).LL_res.C_d_fric_tot, ...
+                      LineWidth=lw(i), ...
+                      Marker=markers(i), MarkerSize=ms(i), ...
+                      DisplayName=disp_name);
+    end
+    plt(end+1) = plot(NACA_4415.xfoil_res.alpha, ...
+                      NACA_4415.xfoil_res.C_d, ...
+                      LineWidth=1, color="k", LineStyle = "-.", ...
+                      DisplayName='NACA 4415');
+    hold off; 
+
+    % Configure limits and ticks
+    xticks(min(alpha):2:max(alpha));
+    xlim(ax, [min(alpha), max(alpha)]);
+
+    % Plot labels
+    set(gcf,'Color','White');
+    set(ax,'FontSize',fs);
+    legend(plt, 'Location', 'northwest', 'Interpreter', 'latex')
+    xlabel('AoA $[^{\circ}]$', 'Interpreter', 'latex');
+    ylabel('$C_{D}$', 'Interpreter', 'latex');
+    set(ax, 'TickLabelInterpreter', 'latex');
+
+    % Save figure
+        if savefigs
+            exp_name = fullfile(exp_fld, 'T1_C_D_vs_alpha.pdf');
+            exportgraphics(gcf, exp_name, 'ContentType', 'vector', ...
+                'BackgroundColor', 'none', 'Resolution', 300);
+        end
+else
+    disp('C_D vs alpha not plotted')
 end
 
 fig_count = fig_count + 1;

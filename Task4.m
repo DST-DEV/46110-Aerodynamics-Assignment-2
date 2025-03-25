@@ -7,7 +7,7 @@ NACA_4415 = load(fullfile(res_fld, 'XFOIL_NACA_4415.mat')).NACA_4415;
 alpha_g0 = 4;  % Midpoint geometric angle of attack
 alpha_gt = 0:2:8;  % Tip geometric angle of attack
 U_0 = 1;
-N=100;
+N=101;
 
 %% Lifting Line calculations
 AR = 6;
@@ -50,9 +50,9 @@ plot_C_di = true;
 
 % Settings
 cols = ["#0072BD", "#D95319", "#EDB120", "#77AC30", "#80B3FF"];  % Colors of the lines
-markers = ["+", "*", "o", "diamond", "v"];  % Markers for the four methods
+markers = ["none", "none", "none", "none", "none"];  % Markers for the four methods
 ms = [4.5, 4.5, 4.5, 4.5, 4.5];  % Marker size for the plots of the four methods
-lw = [1, 1, 1, 1, 1];  % Linewidth for the lines of the four methods
+lw = [1.5, 1.5, 1.5, 1.5, 1.5];  % Linewidth for the lines of the four methods
 ax_col = [0.2, 0.2, 0.2];  % Color of accented axes
 ax_lw = 1.5;  % Line width of accented axes
 fs = 16;  % Plot font size

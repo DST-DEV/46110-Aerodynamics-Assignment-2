@@ -1,4 +1,4 @@
-clear; clc; close all;
+clear; clc;
 %% Preparatory settings
 res_fld = 'results';
 NACA_4415 = load(fullfile(res_fld, 'XFOIL_NACA_4415.mat')).NACA_4415;
@@ -6,7 +6,7 @@ NACA_4415 = load(fullfile(res_fld, 'XFOIL_NACA_4415.mat')).NACA_4415;
 %% Simulation settings
 alpha = -4:.1:10;
 i_aa = find(alpha == 0 | alpha == 5 | alpha == 10); % Find indices for sub-taks a
-N=300;
+N=101;
 
 %% Lifting Line calculations
 AR = 4:2:10;
@@ -19,7 +19,11 @@ end
 
 for i = 1:numel(AR)
     % Calculate spanwise coordinates 
-    [y, theta] = wings_rect(i).wing.generate_coordinates(N);
+    [y, theta] = wings_rect(i).wing.generate_coordinates(N, 0);
+    figure(9)
+    plot (y)
+    figure(10)
+    plot (theta)
 
     % Calculate coefficients of lifting line theory
     A = LiftingLine.solve_coeffs(wings_rect(i).wing, y, theta, alpha, ...
@@ -56,9 +60,9 @@ plot_C_di = true;
 
 % Settings
 cols = ["#0072BD", "#D95319", "#EDB120", "#77AC30", "#80B3FF"];  % Colors of the lines
-markers = ["+", "*", "o", "diamond", "v"];  % Markers for the four methods
+markers = ["none", "none", "none", "none", "none"];  % Markers for the four methods
 ms = [4.5, 4.5, 4.5, 4.5, 4.5];  % Marker size for the plots of the four methods
-lw = [1, 1, 1, 1, 1];  % Linewidth for the lines of the four methods
+lw = [1.5, 1.5, 1.5, 1.5, 1.5];  % Linewidth for the lines of the four methods
 ax_col = [0.2, 0.2, 0.2];  % Color of accented axes
 ax_lw = 1.5;  % Line width of accented axes
 fs = 16;  % Plot font size
@@ -144,7 +148,6 @@ if plot_alpha
                           Marker=markers(i), MarkerSize=ms(i), ...
                           DisplayName=disp_name);
         end
-        uistack(plt(end), 'bottom');
         hold off; 
     
         % % Configure limits and ticks
@@ -200,7 +203,7 @@ if plot_C_l
                       DisplayName=disp_name);
     end
     plt(end+1) = plot(alpha, deg2rad(alpha-NACA_4415.alpha_L0)*NACA_4415.m_0, ...
-                  LineWidth=lw(5), color="k", ...
+                  LineWidth=1, color="k", LineStyle = "-.", ...
                   DisplayName='Linear Lift Slope');
     hold off; 
 
@@ -255,7 +258,6 @@ if plot_C_di
                       Marker=markers(i), MarkerSize=ms(i), ...
                       DisplayName=disp_name);
     end
-    uistack(plt(end), 'bottom');
     hold off; 
 
     % Configure limits and ticks

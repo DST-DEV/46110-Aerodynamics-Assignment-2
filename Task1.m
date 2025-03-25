@@ -143,6 +143,9 @@ if plot_C_l
                       Marker=markers(i), MarkerSize=ms(i), ...
                       DisplayName=disp_name);
     end
+    plt(end+1) = plot(alpha, deg2rad(alpha-NACA_4415.alpha_L0)*NACA_4415.m_0, ...
+                  LineWidth=lw(5), color="k", ...
+                  DisplayName='Linear Lift Slope');
     hold off; 
 
     % Configure limits and ticks

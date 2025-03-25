@@ -6,7 +6,7 @@ NACA_4415 = load(fullfile(res_fld, 'XFOIL_NACA_4415.mat')).NACA_4415;
 %% Simulation settings
 alpha = -4:.1:10;
 i_aa = find(alpha == 0 | alpha == 5 | alpha == 10); % Find indices for sub-taks a
-N=100;
+N=300;
 
 %% Lifting Line calculations
 AR = 4:2:10;
@@ -199,6 +199,9 @@ if plot_C_l
                       Marker=markers(i), MarkerSize=ms(i), ...
                       DisplayName=disp_name);
     end
+    plt(end+1) = plot(alpha, deg2rad(alpha-NACA_4415.alpha_L0)*NACA_4415.m_0, ...
+                  LineWidth=lw(5), color="k", ...
+                  DisplayName='Linear Lift Slope');
     hold off; 
 
     % Configure limits and ticks

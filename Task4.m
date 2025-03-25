@@ -157,7 +157,7 @@ end
 
 fig_count = fig_count + 1;
 
-%Plot C_l vs alpha
+%Plot C_l vs y
 if plot_C_l
     % Create plot
     figure(fig_count + 1);
@@ -169,7 +169,7 @@ if plot_C_l
     y_ax = xline(0, Color=ax_col, LineWidth=ax_lw, ...
                  HandleVisibility='off'); % Thick vertical line at x=0
 
-    % Plot Gamma curves 
+    % Plot C_l curves 
     for i = 1:numel(alpha_gt)
         plot(wings_rect.LL_res.y/wings_rect.b*2, ...
              wings_rect.LL_res.C_l(:,i), ...
@@ -203,7 +203,7 @@ end
 
 fig_count = fig_count + 1;
 
-%Plot C_d vs alpha
+%Plot C_d vs y
 if plot_C_di
     % Create plot
     figure(fig_count + 1);
@@ -215,7 +215,7 @@ if plot_C_di
     y_ax = xline(0, Color=ax_col, LineWidth=ax_lw, ...
                  HandleVisibility='off'); % Thick vertical line at x=0
 
-    % Plot Gamma curves 
+    % Plot C_d curves 
     for i = 1:numel(alpha_gt)
         plot(wings_rect.LL_res.y/wings_rect.b*2, ...
              wings_rect.LL_res.C_di(:,i), ...

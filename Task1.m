@@ -5,6 +5,7 @@ NACA_4415 = load(fullfile(res_fld, 'XFOIL_NACA_4415.mat')).NACA_4415;
 
 %% Simulation settings
 alpha = -6:.25:10;
+U_0 = 1;
 N=101;
 
 %% Lifting Line calculations
@@ -32,7 +33,7 @@ for i = 1:numel(AR)
     [alpha_i, C_l, C_di, Gamma] = ...
         LiftingLine.calc_lift_drag_sections(wings_ell(i).wing, y, theta, A);
     
-    
+    % Calculate friction drag
     alpha_g = alpha - alpha_i;  % Geometric angle of attack
     C_d_fric = interp1(NACA_4415.xfoil_res.alpha, ...
                        NACA_4415.xfoil_res.C_d, ...
@@ -40,6 +41,10 @@ for i = 1:numel(AR)
     c = wings_ell(i).wing.chord_length(y);
     D = -trapz(y, c'.*C_d_fric, 1);
     C_d_fric_tot = D/wings_ell(i).wing.S;
+
+    %Non-dimensionalize Gamma distribution
+    Gamma_nd = Gamma./(U_0*wings_ell(i).wing.c_mean);
+
     wings_ell(i).LL_res = struct('y', y, 'theta', theta, 'A', A, 'c', c, ...
                                  'alpha', alpha,...
                                  'C_l_tot', C_l_tot, ...
@@ -47,7 +52,7 @@ for i = 1:numel(AR)
                                  'alpha_i', alpha_i, 'C_l', C_l, ...
                                  'C_di', C_di, 'C_d_fric', C_d_fric, ...
                                  'D', D, 'C_d_fric_tot', C_d_fric_tot,...
-                                 'Gamma', Gamma);
+                                 'Gamma', Gamma, 'Gamma_nd', Gamma_nd);
 end
 
 save(fullfile(res_fld, 'T1_wings_ell.mat'), 'wings_ell');
@@ -100,7 +105,7 @@ if plot_Gamma
             disp_name = '$AR=\infty$';
         end
         plot(wings_ell(i).LL_res.y/wings_ell(i).b*2, ...
-             wings_ell(i).LL_res.Gamma(:,ind), ...
+             wings_ell(i).LL_res.Gamma_nd(:,ind), ...
              LineWidth=lw(i), Marker=markers(i), MarkerSize=ms(i), ...
              DisplayName=disp_name);
     end
@@ -116,7 +121,7 @@ if plot_Gamma
     set(ax,'FontSize',fs);
     legend('Location', 'south', 'Interpreter', 'latex')
     xlabel('$y/(b/2)$', 'Interpreter', 'latex');
-    ylabel('$\Gamma$', 'Interpreter', 'latex');
+    ylabel('$\Gamma/(U_\infty\bar{c})$', 'Interpreter', 'latex');
     set(ax, 'TickLabelInterpreter', 'latex');
 else
     disp('Gamma vs y not plotted')

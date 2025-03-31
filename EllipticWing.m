@@ -8,6 +8,7 @@ classdef EllipticWing
         b   % Wing Span
         S   % Wing area
         c_root   % Root chord
+        c_mean   % Mean chord
     end
     
     methods
@@ -23,6 +24,7 @@ classdef EllipticWing
             obj.b = b;
             obj.S = obj.b^2 / obj.AR;
             obj.c_root = 4 * obj.S / (pi * obj.b);
+            obj.c_mean = b/AR;
         end
         
         function [y, theta] = generate_coordinates(obj, N)

@@ -6,6 +6,7 @@ NACA_4415 = load(fullfile(res_fld, 'XFOIL_NACA_4415.mat')).NACA_4415;
 %% Simulation settings
 alpha = -4:.1:10;
 i_aa = find(alpha == 0 | alpha == 5 | alpha == 10); % Find indices for sub-taks a
+U_0 = 1;
 N=101;
 
 %% Lifting Line calculations
@@ -39,13 +40,17 @@ for i = 1:numel(AR)
     C_d_fric = interp1(NACA_4415.xfoil_res.alpha, ...
                        NACA_4415.xfoil_res.C_d, ...
                        alpha_eff);
+
+    %Non-dimensionalize Gamma distribution
+    Gamma_nd = Gamma./(U_0*wings_rect(i).wing.c_mean);
+
     wings_rect(i).LL_res = struct('y', y, 'theta', theta, 'A', A, ...
                                  'alpha', alpha,...
                                  'C_l_tot', C_l_tot, ...
                                  'C_di_tot', C_di_tot, ...
                                  'alpha_i', alpha_i, 'C_l', C_l, ...
                                  'C_di', C_di, 'C_d_fric', C_d_fric, ...
-                                 'Gamma', Gamma);
+                                 'Gamma', Gamma, 'Gamma_nd', Gamma_nd);
 end
 
 save(fullfile(res_fld, 'T2_wings_rect.mat'), 'wings_rect');
@@ -112,7 +117,7 @@ if plot_Gamma
         set(ax,'FontSize',fs);
         legend('Location', 'south', 'Interpreter', 'latex')
         xlabel('$y/(b/2)$', 'Interpreter', 'latex');
-        ylabel('$\Gamma$', 'Interpreter', 'latex');
+        ylabel('$\Gamma/(U_\infty\bar{c})$', 'Interpreter', 'latex');
         set(ax, 'TickLabelInterpreter', 'latex');
     end
 else

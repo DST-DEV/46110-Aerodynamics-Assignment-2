@@ -8,6 +8,7 @@ classdef RectangularWing
         b   % Wing Span
         S   % Wing area
         c_root   % Root chord
+        c_mean   % Mean chord
     end
     
     methods
@@ -23,6 +24,7 @@ classdef RectangularWing
             obj.b = b;
             obj.S = obj.b^2 / obj.AR;
             obj.c_root = obj.S / obj.b;
+            obj.c_mean = b/AR;
         end
         
         function [y, theta] = generate_coordinates(obj, N, density_factor)
@@ -75,7 +77,7 @@ classdef RectangularWing
             %
             %   Output:
             %       c - Chord length at location y
-            c = obj.S / obj.b * ones(size(y));
+            c = obj.c_root * ones(size(y));
         end
     end
 end

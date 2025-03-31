@@ -157,6 +157,52 @@ end
 
 fig_count = fig_count + 1;
 
+%Plot alpha_eff vs y
+if plot_alpha
+    % Create plot
+    figure(fig_count + 1);
+    cla; hold on; grid on;
+    colororder(cols);
+    ax = gca;
+        
+    % Highlight y=0 grid line
+    y_ax = xline(0, Color=ax_col, LineWidth=ax_lw, ...
+                 HandleVisibility='off'); % Thick vertical line at x=0
+
+    % Plot alpha_eff curves 
+    for i = 1:numel(alpha_gt)
+        plot(wings_twist.LL_res.y/wings_twist.b*2, ...
+             alpha_g(:,i) - wings_twist.LL_res.alpha_i(:,i) - NACA_4415.alpha_L0, ...
+             LineWidth=lw(i), Marker=markers(i), MarkerSize=ms(i), ...
+             DisplayName=[sprintf('$\\alpha_{g,tip}=%d$', alpha_gt(i))]);
+    end
+    hold off; 
+
+    % Configure limits and ticks
+    ylim('auto');
+    xticks(-1:.5:1);
+    xlim(ax, [-1, 1]);
+
+    % Plot labels
+    set(gcf,'Color','White');
+    set(ax,'FontSize',fs);
+    legend('Location', 'south', 'Interpreter', 'latex')
+    xlabel('$y/(b/2)$', 'Interpreter', 'latex');
+    ylabel('$\alpha_{eff}\:[^{\circ}]$', 'Interpreter', 'latex');
+    set(ax, 'TickLabelInterpreter', 'latex');
+
+    % Save figure
+    if savefigs
+        exp_name = fullfile(exp_fld, 'T4_alpha_eff_vs_y.pdf');
+        exportgraphics(gcf, exp_name, 'ContentType', 'vector', ...
+            'BackgroundColor', 'none', 'Resolution', 300);
+    end
+else
+    disp('Effective alpha vs y not plotted')
+end
+
+fig_count = fig_count + 1;
+
 %Plot C_l vs y
 if plot_C_l
     % Create plot

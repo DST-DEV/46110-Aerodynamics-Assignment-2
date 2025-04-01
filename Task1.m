@@ -10,7 +10,7 @@ N=101;
 
 %% Lifting Line calculations
 AR = 4:2:10;
-AR = [AR, 1e+5];  % Add 'infinite' aspect ratio
+AR = [AR, 1e+50];  % Add 'infinite' aspect ratio
 b = 1;
 for i = 1:numel(AR)
     wings_ell(i) = struct('AR', AR(i), 'b', b, 'wing', ...
@@ -181,7 +181,7 @@ end
 
 fig_count = fig_count + 1;
 
-%Plot C_l vs alpha
+%Plot C_L vs alpha
 if plot_C_l
     % Create plot
     figure(fig_count+1);
@@ -195,7 +195,7 @@ if plot_C_l
     x_ax = yline(0, Color=ax_col, LineWidth=ax_lw, ...
                  HandleVisibility='off'); % Thick vertical line at y=0
 
-    % Plot C_l curves 
+    % Plot C_L curves 
     for i = 1:numel(AR)
         if AR(i)<10000
             disp_name = sprintf('$AR=%d$', AR(i));
@@ -223,7 +223,7 @@ if plot_C_l
     set(ax,'FontSize',fs);
     legend('Location', 'northwest', 'Interpreter', 'latex')
     xlabel('AoA $[^{\circ}]$', 'Interpreter', 'latex');
-    ylabel('$C_l$', 'Interpreter', 'latex');
+    ylabel('$C_L$', 'Interpreter', 'latex');
     set(ax, 'TickLabelInterpreter', 'latex');
 
     % Save figure
@@ -238,7 +238,7 @@ end
 
 fig_count = fig_count + 1;
 
-%Plot C_d vs alpha
+%Plot C_Di vs alpha
 if plot_C_di
     % Create plot
     figure(fig_count+1);
@@ -250,7 +250,7 @@ if plot_C_di
     y_ax = xline(0, Color=ax_col, LineWidth=ax_lw, ...
                  HandleVisibility='off'); % Thick vertical line at x=0
 
-    % Plot C_d curves 
+    % Plot C_Di curves 
     plt = [];  % Ensure plot list is empty
     for i = 1:numel(AR)
         if AR(i)<10000
@@ -277,7 +277,7 @@ if plot_C_di
     set(ax,'FontSize',fs);
     legend(plt, 'Location', 'northwest', 'Interpreter', 'latex')
     xlabel('AoA $[^{\circ}]$', 'Interpreter', 'latex');
-    ylabel('$C_{d_i}$', 'Interpreter', 'latex');
+    ylabel('$C_{D_i}$', 'Interpreter', 'latex');
     set(ax, 'TickLabelInterpreter', 'latex');
 
     % Save figure
@@ -333,7 +333,7 @@ if plot_C_D
     set(ax,'FontSize',fs);
     legend(plt, 'Location', 'northwest', 'Interpreter', 'latex')
     xlabel('AoA $[^{\circ}]$', 'Interpreter', 'latex');
-    ylabel('$C_{D}$', 'Interpreter', 'latex');
+    ylabel('$C_{D_{fric}}$', 'Interpreter', 'latex');
     set(ax, 'TickLabelInterpreter', 'latex');
 
     % Save figure

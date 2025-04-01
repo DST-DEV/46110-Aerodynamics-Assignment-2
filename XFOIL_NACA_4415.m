@@ -1,5 +1,5 @@
 % This script calculates the lift slope and zero lift angle using XFOIL.
-clear; clc;
+clear; clc; close all;
 xfoil_exe = fullfile('..','..', ...
                     '03_additional_material', 'Xfoil', 'xfoil.exe');  %Path to Xfoil executable
 
@@ -36,6 +36,7 @@ if rerun_XFOIL
 else
     alpha = NACA_4415.xfoil_res.alpha;
     C_l = NACA_4415.xfoil_res.C_l;
+    C_d = NACA_4415.xfoil_res.C_d;
 end
 
 %% Calculate zero lift angle and lift slope
@@ -51,7 +52,8 @@ NACA_4415.alpha_L0 = -p(2) / p(1);
 save(fpath_res, 'NACA_4415');  % Save results
 
 if plot_XFOIL
-    figure;
+    % Plot C_l
+    figure(1);
     plot(alpha, C_l, 'b', 'DisplayName', 'Data'); % Plot data points
 
     hold on;
@@ -62,6 +64,17 @@ if plot_XFOIL
     
     xlabel('AoA [deg]');
     ylabel('C_l');
+    legend;
+    grid on;
+
+    % Plot C_d
+    figure(2);
+    cla; hold on; grid on;
+    plot(alpha, C_d, 'b', 'DisplayName', 'Data'); % Plot data points
+    hold off;
+
+    xlabel('AoA [deg]');
+    ylabel('C_d');
     legend;
     grid on;
 end

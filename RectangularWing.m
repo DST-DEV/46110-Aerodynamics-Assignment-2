@@ -39,18 +39,10 @@ classdef RectangularWing
             %   Outputs:
             %       y     - Spanwise locations
             %       theta - Angular coordinates
-
-
-            % theta = linspace(0, pi, N+2);
-            % theta = theta(2:end-1);  % Remove the first and last point to avoid singularities
-            %Calculate spanwise coordinates
-            % y = -obj.b/2 * cos(theta);   % Spanwise locations
-
             if nargin<3
                 density_factor = 0;
             end
 
-            % density_factor = 1 + 1/(density_factor-.6)^2;
             if density_factor == 0
                 theta = linspace(0, pi, N+2);
                 theta = theta(2:end-1);  % Remove the first and last point to avoid singularities
@@ -60,6 +52,9 @@ classdef RectangularWing
             else
                 x = linspace(-5, 5, N+2);
                 y0 = (sqrt(4*density_factor.^2*x.^2 +1) - 1)./(2*x);
+                if mod(N,2) ~= 0
+                    y0(isnan(y0))=0;
+                end
                 y1 = y0./(max(abs(y0)));
                 y1 = y1(2:end-1);
                 y = y1*obj.b/2;

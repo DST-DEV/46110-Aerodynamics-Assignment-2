@@ -1,0 +1,6 @@
+- Wings were discretized with a uniform distribution of theta from 0 to pi
+- the y-coordinates were calculated with y = b/2 * cos(theta) (eq. 8.23) and scaled with b calculated from the AR via AR=b^2/S
+- The system parameters were calculated with eq. 8.44a, using only the symmetric components since the solution is known to be symmetric
+- lift slope and zero angle of attack were determined from xfoil, by fitting a slope to the results from -10 to +5° aoa
+- alpha_i, C_l & C_di were calculated with eq. 8.45 - 8.47
+- C_d_fric was calculated by interpolating the C_D values from XFOIL for each spanwise position and integrating the drag

@@ -7,7 +7,7 @@ NACA_4415 = load(fullfile(res_fld, 'XFOIL_NACA_4415.mat')).NACA_4415;
 alpha = -4:.1:10;
 i_aa = find(alpha == 0 | alpha == 5 | alpha == 10); % Find indices for sub-taks a
 U_0 = 1;
-N=101;
+N=401;
 
 %% Lifting Line calculations
 AR = 4:2:10;
@@ -23,8 +23,19 @@ for i = 1:numel(AR)
     [y, theta] = wings_rect(i).wing.generate_coordinates(N, 0);
     figure(9)
     plot (y)
+    grid on;
+    xlabel('Index', 'Interpreter', 'latex');
+    ylabel('$y\:[m]$', 'Interpreter', 'latex');
+    set(gca, 'TickLabelInterpreter', 'latex');
+
     figure(10)
     plot (theta)
+    grid on;
+    xlabel('Index', 'Interpreter', 'latex');
+    ylabel('$\theta\:[rad]$', 'Interpreter', 'latex');
+    set(gca, 'TickLabelInterpreter', 'latex');
+    yticks([0:pi/4:pi])
+    yticklabels({'$0$','$1/4\cdot\pi$','$1/2\cdot\pi$','$3/4\cdot\pi$','$\pi$'})
 
     % Calculate coefficients of lifting line theory
     A = LiftingLine.solve_coeffs(wings_rect(i).wing, y, theta, alpha, ...
@@ -182,7 +193,7 @@ end
 
 fig_count = fig_count + length(i_aa);
 
-%Plot C_l vs alpha
+%Plot C_L vs alpha
 if plot_C_l
     % Create plot
     figure(fig_count+1);
@@ -194,7 +205,7 @@ if plot_C_l
     y_ax = xline(0, Color=ax_col, LineWidth=ax_lw, ...
                  HandleVisibility='off'); % Thick vertical line at x=0
 
-    % Plot C_l curves 
+    % Plot C_L curves 
     for i = 1:numel(AR)
         if AR(i)<10000
             disp_name = sprintf('$AR=%d$', AR(i));
@@ -222,7 +233,7 @@ if plot_C_l
     set(ax,'FontSize',fs);
     legend('Location', 'northwest', 'Interpreter', 'latex')
     xlabel('AoA $[^{\circ}]$', 'Interpreter', 'latex');
-    ylabel('$C_l$', 'Interpreter', 'latex');
+    ylabel('$C_L$', 'Interpreter', 'latex');
     set(ax, 'TickLabelInterpreter', 'latex');
 
     % Save figure
@@ -237,7 +248,7 @@ end
 
 fig_count = fig_count + 1;
 
-%Plot C_d vs alpha
+%Plot C_D vs alpha
 if plot_C_di
     % Create plot
     figure(fig_count+1);
@@ -275,7 +286,7 @@ if plot_C_di
     set(ax,'FontSize',fs);
     legend(plt, 'Location', 'northwest', 'Interpreter', 'latex')
     xlabel('AoA $[^{\circ}]$', 'Interpreter', 'latex');
-    ylabel('$C_{d_i}$', 'Interpreter', 'latex');
+    ylabel('$C_{D_i}$', 'Interpreter', 'latex');
     set(ax, 'TickLabelInterpreter', 'latex');
 
     % Save figure
